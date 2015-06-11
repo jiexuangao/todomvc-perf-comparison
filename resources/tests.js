@@ -186,6 +186,7 @@ Suites.push({
     ]
 });
 
+
 Suites.push({
     name: 'Mercury',
     url: 'todomvc/mercury/index.html',
@@ -245,6 +246,40 @@ Suites.push({
                 keydownEvent.initEvent('keydown', true, true);
                 keydownEvent.keyCode = 13; // VK_ENTER
                 newTodo.dispatchEvent(keydownEvent);
+            }
+        }),
+        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++)
+                checkboxes[i].click();
+        }),
+        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++)
+                deleteButtons[i].click();
+        })
+    ]
+});
+
+
+Suites.push({
+    name: 'Polymer',
+    url: 'todomvc/polymer/index.html',
+    version: '1.0',
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('html /deep/#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                var keypressEvent = document.createEvent('Event');
+                keypressEvent.initEvent('keypress', true, true);
+                keypressEvent.which = 13;
+                newTodo.value = 'Something to do ' + i;
+                newTodo.dispatchEvent(keypressEvent)
             }
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
