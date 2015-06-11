@@ -276,19 +276,19 @@ Suites.push({
         new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
             for (var i = 0; i < numberOfItemsToAdd; i++) {
                 var keypressEvent = document.createEvent('Event');
-                keypressEvent.initEvent('keypress', true, true);
+                keypressEvent.initEvent('td-input-commit', true, true);
                 keypressEvent.which = 13;
                 newTodo.value = 'Something to do ' + i;
                 newTodo.dispatchEvent(keypressEvent)
             }
         }),
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            var checkboxes = contentDocument.querySelectorAll('html /deep/.toggle');
             for (var i = 0; i < checkboxes.length; i++)
                 checkboxes[i].click();
         }),
         new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            var deleteButtons = contentDocument.querySelectorAll('html /deep/.destroy');
             for (var i = 0; i < deleteButtons.length; i++)
                 deleteButtons[i].click();
         })
