@@ -95,8 +95,6 @@ function startTest() {
             if (!results)
                 return;
 
-            console.log(results)
-
             runs.push(measuredValues)
             timesRan++
             if (timesRan >= timesToRun) {
