@@ -7,10 +7,11 @@ Rosetta.register('r-todoapp', function (tag) {
             if (item.completed) {
                 completed = 'checked';
             }
-            arr.push(tag.create('li', { 'index': index }, tag.create('div', { 'class': 'view' }, tag.create('input', {
+            arr.push(tag.create('li', null, tag.create('div', { 'class': 'view' }, tag.create('input', {
                 'class': 'toggle',
                 'type': 'checkbox',
-                'onClick': toggle
+                'onClick': toggle,
+                'index': index
             }), tag.create('label', null, item.title), tag.create('button', {
                 'class': 'destroy',
                 'onClick': deleteLi
@@ -29,7 +30,7 @@ Rosetta.register('r-todoapp', function (tag) {
         }
     }
     function deleteLi(e) {
-        var index = parseInt($(e.target).parent().parent().attr('index'), 10);
+        var index = parseInt($(e.target).attr('index'), 10);
         var list = tag.attrs.list;
         list.splice(index, 1);
         tag.update({ list: list || [] });
