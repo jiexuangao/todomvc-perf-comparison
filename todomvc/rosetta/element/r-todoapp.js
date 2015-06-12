@@ -10,7 +10,6 @@ Rosetta.register('r-todoapp', function (tag) {
             arr.push(tag.create('li', { 'index': index }, tag.create('div', { 'class': 'view' }, tag.create('input', {
                 'class': 'toggle',
                 'type': 'checkbox',
-                'checked': completed,
                 'onClick': toggle
             }), tag.create('label', null, item.title), tag.create('button', {
                 'class': 'destroy',
@@ -20,15 +19,17 @@ Rosetta.register('r-todoapp', function (tag) {
         })));
     };
     function toggle(e) {
-        if ($(e.target).attr('checked') == 'checked') {
-            $(e.target).parent().parent().addClass('completed');
+        var $el = $(e.target);
+        if ($el.attr('checked') != 'checked') {
+            $el.attr('checked', 'checked');
+            $el.parent().parent().addClass('completed');
         } else {
-            $(e.target).parent().parent().removeClass('completed');
+            $el.attr('checked', false);
+            $el.parent().parent().removeClass('completed');
         }
     }
-
     function deleteLi(e) {
-        var index = parseInt($(e.target).parents('li').attr('index'), 10);
+        var index = parseInt($(e.target).parent().parent().attr('index'), 10);
         var list = tag.attrs.list;
         list.splice(index, 1);
         tag.update({ list: list || [] });

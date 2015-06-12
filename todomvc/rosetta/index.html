@@ -53,25 +53,24 @@
 
         </div>
         <script type="text/javascript" src="bower_components/jquery.js"></script>
-        <script src="Rosetta/Rosetta.js"></script>
-        <script src="element/r-todoapp.js?v=1"></script>
+        <script src="Rosetta/Rosetta.js?v=sf"></script>
+        <script src="element/r-todoapp.js?v=ddd"></script>
 
 <script type="text/javascript">
+        var $newtodo = $('#new-todo');
         function submitChange (e) {
-            if (e.which === 13 && $('#new-todo').val().trim()) {
+            if (e.which === 13 && $newtodo.val().trim()) {
                 var tag = Rosetta.ref('aaa');
 
-                var list = tag.attrs.list.concat();
-
-                list.push({
+                tag.attrs.list.push({
                     completed: '',
-                    title: $('#new-todo').val().trim()
+                    title: $newtodo.val().trim()
                 });
 
                 tag.update({
-                    list: list
+                    list: tag.attrs.list
                 });
-                $('#new-todo').val('');
+                $newtodo.val('');
             }
         }
 

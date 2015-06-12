@@ -77,38 +77,18 @@ function update(options) {
         type = this.type,
         attr = {};
 
-    debugger;
-
-    for (var i in this.attrs) {
-        attr[i] = this.attrs[i];
-    }
-
-    attr = extend(attr, options, true);
+    attr = extend(this.attrs, options, true);
 
     var newTree = this.__t(this, attr, this.refs);
 
     var patches = diff(oldTree, newTree);
-    debugger;
-    this.root = patch(this.root, patches);
-    this.attrs = attr;
-    this.vTree = newTree;
 
-    for (var i in this.attrs) {
-        var item = this.attrs[i];
-        if (!supportEvent[i]) {
-            if (!!item) {
-                if (!isString(item)) {
-                    item = objToString(item);
-                }
-            }
-            this.root.setAttribute(i, item || '');
-        }
-    }
+    this.root = patch(this.root, patches);
+    this.vTree = newTree;
 
     Rosetta.triggerChildren(this, ATTRIBUTECHANGE);
     this.trigger(ATTRIBUTECHANGE, this);
 }
-
 
 function destroy() {
     this.off();
@@ -2690,10 +2670,10 @@ function create(type, attr) {
     if (!isString(type)) {
         return;
     }
-    attr = attr || {};
+
     attr = toType(attr || '') || {};
 
-    var contentChildren = [].slice.call(arguments, 2);
+    var contentChildren = [].slice.call(arguments, 2) || [];
 
     contentChildren = toPlainArray(contentChildren);
 
@@ -3609,7 +3589,6 @@ function reorderChildren(domNode, bIndex) {
 
 function replaceRoot(oldRoot, newRoot) {
     if (oldRoot && newRoot && oldRoot !== newRoot && oldRoot.parentNode) {
-        console.log(oldRoot)
         oldRoot.parentNode.replaceChild(newRoot, oldRoot)
     }
 
