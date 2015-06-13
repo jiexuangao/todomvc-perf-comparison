@@ -104,9 +104,9 @@ function create(type, attr) {
         this.refs[attr.ref] = obj;
     }
 
-    if (obj.isRosettaElem == true) {
+    if (obj.realObj && obj.realObj.isRosettaElem == true) {
         this.rosettaElems = this.rosettaElems || [];
-        this.rosettaElems.push(obj);
+        this.rosettaElems.push(obj.realObj);
     }
 
     return obj;
@@ -2600,12 +2600,12 @@ function appendRoot(obj, root, force) {
     return obj;
 }
 
-function render(obj, root, force) {
+function render(vTree, root, force) {
     if (isString(root)) {
         root = query(root)[0];
     }
 
-    var vTree = obj.isRosettaElem == true ? obj.vTree : obj;
+    var obj = vTree.realObj;
 
     if (!vTree || !root) {
         return;
@@ -2644,6 +2644,9 @@ function create(type, attr) {
     }
 
     var eventObj = {};
+    var childrenContent = [].slice.call(arguments, 2);
+    var vTree = '';
+
     for (var i in attr) {
         var item = attr[i];
         if (supportEvent[i]) {
@@ -2653,35 +2656,13 @@ function create(type, attr) {
 
     attr = attr || {};
 
-    var arr = [].slice.call(arguments, 2);
-    var contentChildren = [];
-
-    function parseContentChildren(arr) {
-        arr.map(function(item, index) {
-            if (isArray(item)) {
-                parseContentChildren(item);
-            } else {
-                if (typeof item == 'number') {
-                    contentChildren.push('' + item);
-                } else if(item && item.isRosettaElem == true) {
-                    contentChildren.push(item.vTree);
-                } else {
-                    contentChildren.push(item);
-                }
-            }
-        });
-        return contentChildren;
-    }
-
-    contentChildren = parseContentChildren(arr);
-
     if (isOriginalTag(type)) {
         var newAttrs = extend({
             attributes: attr
         }, eventObj, true);
 
 
-        var vTree = h.call(this, type, newAttrs, contentChildren);
+        vTree = h.call(this, type, newAttrs, childrenContent);
 
         return vTree;
     } else {
@@ -2698,12 +2679,13 @@ function create(type, attr) {
         elemObj.name = attr.ref ? attr.ref && ref(attr.ref, elemObj) : '';
         extend(elemObj.attrs, attr, true);
 
-        var vTree = elemObj.__t(elemObj, elemObj.attrs, elemObj.refs);
+        vTree = elemObj.__t(elemObj, elemObj.attrs, elemObj.refs);
 
         elemObj.vTree = vTree;
         elemObj.trigger(CREATED, elemObj);
+        vTree.realObj = elemObj;
 
-        return elemObj;
+        return vTree;
     }
 }
 
