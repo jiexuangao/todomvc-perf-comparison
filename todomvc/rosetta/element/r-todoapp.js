@@ -7,7 +7,7 @@ Rosetta.register('r-todoapp', function (tag) {
             if (item.completed) {
                 completed = 'checked';
             }
-            arr.push(tag.create('li', null, tag.create('div', { 'class': 'view' }, tag.create('input', {
+            arr.push(tag.create('li', { 'key': Math.random() }, tag.create('div', { 'class': 'view' }, tag.create('input', {
                 'class': 'toggle',
                 'type': 'checkbox',
                 'onClick': toggle,

@@ -2,9 +2,6 @@
 <html>
 <head>
 <title>TodoMVC Benchmark</title>
-<script type="text/javascript" src="resources/jsapi.js"></script>
-<script src="resources/benchmark-runner.js" defer></script>
-<script src="resources/tests.js" defer></script>
 <style>
 body {
   font-family: 'Lucida Grande','Trebuchet MS','Bitstream Vera Sans',Verdana,Helvetica,sans-serif;
@@ -18,6 +15,7 @@ ol ol { margin-left: 2em; list-position: outside; }
 .ran { color: grey; }
 nav { position: absolute; right: 10px; }
 </style>
+<link rel="stylesheet" type="text/css" href="resources/ui+zh_CN.css">
 </head>
 <body>
   <div id="analysis" style="float:left; display: none;">
@@ -37,6 +35,11 @@ nav { position: absolute; right: 10px; }
       </p>
     </div>
   </div>
+  <script type="text/javascript" src="resources/jsapi.js"></script>
+  <script type="text/javascript" src="resources/uds.js"></script>
+  <script type="text/javascript" src="resources/format+zh_CN,default+zh_CN,ui+zh_CN,corechart+zh_CN.I.js"></script>
+  <script src="resources/benchmark-runner.js" defer></script>
+  <script src="resources/tests.js" defer></script>
   <script src="resources/manager.js"></script>
 </body>
 

@@ -2,45 +2,6 @@ var numberOfItemsToAdd = 100;
 var Suites = [];
 
 Suites.push({
-    name: 'Rosetta',
-    url: 'todomvc/rosetta/index.html?v=' + (new Date()),
-    version: '1.0',
-    prepare: function (runner, contentWindow, contentDocument) {
-        return runner.waitForElement('#new-todo').then(function (element) {
-            element.focus();
-            return element;
-        });
-    },
-    tests: [
-        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
-            for (var i = 0; i < numberOfItemsToAdd; i++) {
-                newTodo.value = 'Something to do ' + i;
-
-                var keydownEvent = document.createEvent('Event');
-                keydownEvent.initEvent('keypress', true, true);
-                keydownEvent.keyCode = 13; // VK_ENTER
-                keydownEvent.which = 13; // VK_ENTER
-                newTodo.dispatchEvent(keydownEvent);
-            }
-        })
-        ,
-        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var checkboxes = contentDocument.querySelectorAll('.toggle');
-            for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].click();
-            }
-        })
-        ,
-        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
-            var deleteButtons = contentDocument.querySelectorAll('.destroy');
-            for (var i = 0; i < deleteButtons.length; i++) {
-                deleteButtons[0].click();
-            }
-        })
-    ]
-});
-
-Suites.push({
     name: 'Backbone',
     url: 'todomvc/backbone/index.html',
     version: '1.1.2',
@@ -118,6 +79,44 @@ Suites.push({
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
             for (var i = 0; i < deleteButtons.length; i++)
                 params.emberRun(function () { deleteButtons[i].click(); });
+        })
+    ]
+});
+
+Suites.push({
+    name: 'Rosetta',
+    url: 'todomvc/rosetta/index.html?v=' + (new Date()),
+    version: '1.0',
+    prepare: function (runner, contentWindow, contentDocument) {
+        return runner.waitForElement('#new-todo').then(function (element) {
+            element.focus();
+            return element;
+        });
+    },
+    tests: [
+        new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
+            for (var i = 0; i < numberOfItemsToAdd; i++) {
+                newTodo.value = 'Something to do ' + i;
+
+                var keydownEvent = document.createEvent('Event');
+                keydownEvent.initEvent('keypress', true, true);
+                keydownEvent.which = 13; // VK_ENTER
+                newTodo.dispatchEvent(keydownEvent);
+            }
+        })
+        ,
+        new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var checkboxes = contentDocument.querySelectorAll('.toggle');
+            for (var i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].click();
+            }
+        })
+        ,
+        new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
+            var deleteButtons = contentDocument.querySelectorAll('.destroy');
+            for (var i = 0; i < deleteButtons.length; i++) {
+                deleteButtons[i].click();
+            }
         })
     ]
 });

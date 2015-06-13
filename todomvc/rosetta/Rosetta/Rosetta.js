@@ -2516,6 +2516,8 @@ var createElementClass = require('./createElementClass.js');
 function init() {
     var elems = [];
     _allRendered = false;
+
+    var delegator = Delegator();
     if (!!document.getElementsByClassName) {
         elems = document.getElementsByClassName('r-element');
     } else if (!!document.querySelectorAll) {
@@ -2533,21 +2535,27 @@ function init() {
     for (var i = 0; i < elems.length; i++) {
         var item = elems[i],
             type = item.tagName.toLowerCase(),
-            attrs = item.attributes,
+            // attrs = item.attributes,
+            attrs = item.getAttribute('data');
             options = {};
 
         if (type.indexOf('r-') == 0) {
             var children = item.children,
                 childrenArr = [].slice.call(children);
 
-            for (var n = 0; n < attrs.length; n++) {
-                var attr = attrs[n];
-                options[attr.name] = attr.nodeValue;
-            }
+            // for (var n = 0; n < attrs.length; n++) {
+            //     var attr = attrs[n];
+            //     options[attr.name] = attr.nodeValue;
+            // }
+
+            options = JSON.parse(attrs);
 
             var obj = Rosetta.render(Rosetta.create(type, options, childrenArr), item, true);
 
-            ref(options.ref, obj);
+            if (options && options.ref) {
+                ref(options.ref, obj);
+            }
+
         }
     }
     _allRendered = true;
@@ -2558,24 +2566,6 @@ function updatevNodeContent(vNodeFactory, contentChildren) {
 
 }
 
-function delegate(parent, child, type, cb) {
-    var callback = function(event) {
-        obj = event.srcElement ? event.srcElement : event.target;
-        while(!!obj && obj != parent.parentElement) {
-            if (obj == child) {
-                cb(event);
-                break;
-            }
-            obj = obj.parentElement;
-        }
-    };
-
-    if (parent.addEventListener) {
-        parent.addEventListener(supportEvent[type], callback, false);
-    } else {
-        parent.attachEvent('on' + supportEvent[type], callback);
-    }
-}
 
 function ref(key, value) {
     if (!key) {
@@ -2595,23 +2585,6 @@ function elemClass(type, newClass) {
     } else {
         return _elemClass[type];
     }
-}
-
-
-function updateDom(obj) {
-    for (var i in obj.attrs) {
-        var item = obj.attrs[i];
-        if (!supportEvent[i]) {
-            if (!!item) {
-                if (!isString(item)) {
-                    item = objToString(item);
-                }
-            }
-            obj.root.setAttribute(i, item || '');
-        }
-    }
-
-    return obj;
 }
 
 function triggerChildren(obj, type) {
@@ -2641,13 +2614,13 @@ function render(obj, root, force) {
     var dom = createElement(vTree);
     obj.root = dom;
 
-    // obj = updateDom(obj);
+    var classes = root.getAttribute('class');
     obj = appendRoot(obj, root, force);
 
     if (obj.isRosettaElem == true) {
-        newClass = (dom.getAttribute('class') || '')? (dom.getAttribute('class') || '') + ' ' + obj.type : obj.type;
+        var v = dom.getAttribute('class');
 
-        dom.setAttribute('class', newClass.replace(/r-invisible/g, ''));
+        dom.setAttribute('class', (v + ' ' + classes).replace(/r-invisible/g, ''));
 
         obj.isAttached = true;
 
@@ -2670,7 +2643,15 @@ function create(type, attr) {
         return;
     }
 
-    attr = toType(attr || '') || {};
+    var eventObj = {};
+    for (var i in attr) {
+        var item = attr[i];
+        if (supportEvent[i]) {
+            eventObj['ev-' + supportEvent[i]] = item;
+        }
+    }
+
+    attr = attr || {};
 
     var arr = [].slice.call(arguments, 2);
     var contentChildren = [];
@@ -2693,17 +2674,8 @@ function create(type, attr) {
     }
 
     contentChildren = parseContentChildren(arr);
-    if (isOriginalTag(type)) {
-        var eventObj = {};
-        for (var i in attr) {
-            var item = attr[i];
-            if (supportEvent[i]) {
-                eventObj['ev-' + supportEvent[i]] = item;
-                var delegator = Delegator();
-                delegator.listenTo(supportEvent[i]);
-            }
-        }
 
+    if (isOriginalTag(type)) {
         var newAttrs = extend({
             attributes: attr
         }, eventObj, true);
