@@ -8,40 +8,10 @@
     </head>
     <body>
 
-        <section id="todoapp">
-            <header id="header">
-                <h1>todos</h1>
-                <input id="new-todo" placeholder="What needs to be done?" autofocus/>
-            </header>
 
-            <section id="main">
-                <input id="toggle-all" type="checkbox" />
-                <label for="toggle-all">Mark all as complete</label>
+        <r-todoapp data='{"ref":"aaa", "list":[], "adsd": {"d":1, "c":3}}' class="r-element r-invisible">
 
-                <r-todoapp data='{"ref":"aaa", "list":[], "adsd": {"d":1, "c":3}}' class="r-element r-invisible">
-
-                </r-todoapp>
-            </section>
-
-            <footer id="footer">
-                <span id="todo-count">
-                    <strong>
-                    </strong>
-
-                </span>
-                <ul id="filters">
-                    <li>
-                        <a class="selected" href="#/"></a>
-                    </li>
-                    <li>
-                        <a href="#/active"></a>
-                    </li>
-                    <li>
-                        <a href="#/completed"></a>
-                    </li>
-                </ul>
-            </footer>
-        </section>
+        </r-todoapp>
 
         <footer id="info">
             <p>Double-click to edit a todo</p>
@@ -53,33 +23,8 @@
 
         </div>
         <script type="text/javascript" src="bower_components/jquery.js"></script>
-        <script src="Rosetta/Rosetta.js?v=dddd"></script>
-        <script src="element/r-todoapp.js?v=vsvs"></script>
+        <script src="Rosetta/Rosetta.js?v=dfdf"></script>
+        <script src="element/r-todoapp.js?v=ssss"></script>
 
-<script type="text/javascript">
-        var $newtodo = $('#new-todo');
-        function submitChange (e) {
-            if (e.which === 13 && $newtodo.val().trim()) {
-                var tag = Rosetta.ref('aaa');
-
-                tag.attrs.list.push({
-                    completed: '',
-                    title: $newtodo.val().trim()
-                });
-
-                tag.update({
-                    list: tag.attrs.list
-                });
-                $newtodo.val('');
-            }
-        }
-
-        Rosetta.ready(function() {
-            $(document.body).on('keypress', function(e) {
-                submitChange(e);
-            });
-        });
-
-    </script>
     </body>
 </html>
