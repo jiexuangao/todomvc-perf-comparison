@@ -2532,6 +2532,11 @@ function attributeToAttrs(name, value) {
   }
 
 }
+function updatevNodeContent(vNodeFactory, contentChildren) {
+
+}
+
+window.shouldReplacedContent = [];
 
 function init() {
     var elems = [];
@@ -2578,10 +2583,6 @@ function init() {
     fire.call(Rosetta, 'ready');
 }
 
-function updatevNodeContent(vNodeFactory, contentChildren) {
-
-}
-
 
 function ref(key, value) {
     if (!key) {
@@ -2611,49 +2612,9 @@ function triggerChildren(obj, type) {
     });
 }
 
-function appendRoot(obj, root, force) {
-    root.parentElement.replaceChild(obj.root, root);
-    return obj;
+function appendRoot(dom, root, force) {
+    root.parentElement.replaceChild(dom, root);
 }
-
-function render(vTree, root, force) {
-    if (isString(root)) {
-        root = query(root)[0];
-    }
-
-    var obj = vTree.realObj;
-
-    if (!vTree || !root) {
-        return;
-    }
-
-    var dom = createElement(vTree);
-    var classes = root.getAttribute('class');
-
-    obj.root = dom;
-    obj = appendRoot(obj, root, force);
-
-    if (obj.isRosettaElem == true) {
-        var v = dom.getAttribute('class');
-
-        dom.setAttribute('class', (v + ' ' + classes).replace(/r-invisible/g, ''));
-
-        obj.isAttached = true;
-
-        triggerChildren(obj, ATTACHED);
-
-        obj.trigger(ATTACHED, obj);
-    }
-    return obj;
-    // dom and children events delegation
-}
-
-/**
- * Returns vTree of newly created element instance
- *
- * @method create
- * @return {Object} vTree
- */
 
 function getRealAttr(attr, toRealType) {
     var eventObj = {};
@@ -2677,6 +2638,80 @@ function getRealAttr(attr, toRealType) {
         attr: attr
     }
 }
+
+
+function render(vTree, root, force) {
+    if (isString(root)) {
+        root = query(root)[0];
+    }
+
+    var obj = vTree.realObj;
+
+    if (!vTree || !root) {
+        return;
+    }
+
+    var dom = createElement(vTree);
+    var classes = root.getAttribute('class');
+
+    obj.root = dom;
+
+    var contents = query('content', obj.root);
+    (contents || []).map(function(content, index){
+        var parent = $(content).parents('[isrosettaelem=true]')[0];
+        var num = parent.getAttribute('shouldReplacedContent');
+        var children = shouldReplacedContent[parseInt(num)];
+
+        var newWrapper = document.createElement('div');
+        newWrapper.setAttribute('class', 'content');
+        content.parentElement.replaceChild(newWrapper, content);
+
+
+
+        var tmp = document.createDocumentFragment();
+        for (var i = 0; i < children.length; i++) {
+            var n = children[i];
+
+            tmp.appendChild(n);
+        }
+        var selector = content.getAttribute('selector');
+        var result = query(selector, tmp);
+
+
+        (children || []).map(function(child, i) {
+            if (result.indexOf(child) >= 0) {
+                newWrapper.appendChild(child);
+            }
+        });
+
+        if ($(newWrapper).children().length <= 0) {
+            newWrapper.parentElement.removeChild(newWrapper);
+        }
+    });
+
+    appendRoot(obj.root, root, force);
+
+    if (obj.isRosettaElem == true) {
+        var v = dom.getAttribute('class');
+
+        dom.setAttribute('class', (v + ' ' + classes).replace(/r-invisible/g, ''));
+
+        obj.isAttached = true;
+
+        triggerChildren(obj, ATTACHED);
+
+        obj.trigger(ATTACHED, obj);
+    }
+    return obj;
+    // dom and children events delegation
+}
+
+/**
+ * Returns vTree of newly created element instance
+ *
+ * @method create
+ * @return {Object} vTree
+ */
 
 function create(type, attr) {
     if (!isString(type)) {
@@ -2715,7 +2750,12 @@ function create(type, attr) {
 
         getRealAttr.call(elemObj, attr, true);
 
+
         vTree = elemObj.__t(elemObj, elemObj.attrs, elemObj.refs);
+
+        vTree.properties.attributes.isrosettaelem = true;
+        shouldReplacedContent.push(childrenContent[0]);
+        vTree.properties.attributes.shouldReplacedContent = shouldReplacedContent.length - 1;
 
         elemObj.vTree = vTree;
         elemObj.trigger(CREATED, elemObj);
