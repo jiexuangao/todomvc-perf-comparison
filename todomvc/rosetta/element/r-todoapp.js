@@ -30,6 +30,13 @@ Rosetta.register('r-todoapp', function (tag) {
             'href': '#/'
         })), tag.create('li', null, tag.create('a', { 'href': '#/active' })), tag.create('li', null, tag.create('a', { 'href': '#/completed' }))))));
     };
+
+    tag.attrs = {
+        ref: '',
+        list: [],
+        adad: {}
+    };
+
     function toggle(e) {
         var $el = $(e.target);
         if ($el.attr('checked') != 'checked') {
