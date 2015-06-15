@@ -2543,41 +2543,53 @@ function init() {
     _allRendered = false;
 
     var delegator = Delegator();
-    if (!!document.getElementsByClassName) {
-        elems = document.getElementsByClassName('r-element');
-    } else if (!!document.querySelectorAll) {
-        elems = document.querySelectorAll('.r-element');
-    } else {
-        var doms = document.getElementsByTagName('*')
-        for (var i = 0; i < doms.length; i++) {
-            var item = doms[i];
-            if (item.tagName.toLowerCase().indexOf('r-') >= 0) {
-                elems.push(item);
-            }
-        }
-    }
 
-    for (var i = 0; i < elems.length; i++) {
-        var item = elems[i],
-            type = item.tagName.toLowerCase(),
-            options = {};
+    // if (!!document.getElementsByClassName) {
+    //     elems = document.getElementsByClassName('r-element');
+    // } else if (!!document.querySelectorAll) {
+    //     elems = document.querySelectorAll('.r-element');
+    // } else {
+    //     var doms = document.getElementsByTagName('*')
+    //     for (var i = 0; i < doms.length; i++) {
+    //         var item = doms[i];
+    //         if (item.tagName.toLowerCase().indexOf('r-') >= 0) {
+    //             elems.push(item);
+    //         }
+    //     }
+    // }
 
-        var attrs = item.getAttribute('data');
+    // for (var i = 0; i < elems.length; i++) {
+    //     var item = elems[i],
+    //         type = item.tagName.toLowerCase(),
+    //         options = {};
 
-        if (type.indexOf('r-') == 0) {
-            var children = item.children,
-                childrenArr = [].slice.call(children);
 
-            options = JSON.parse(attrs) || {};
+    //     if (type.indexOf('r-') == 0) {
+    //         // var attrs = item.getAttribute('data');
+    //         var attrs = item.attributes;
 
-            var obj = Rosetta.render(Rosetta.create(type, options, childrenArr), item, true);
+    //         var children = item.children,
+    //             childrenArr = [].slice.call(children);
 
-            if (options && options.ref) {
-                ref(options.ref, obj);
-            }
-        }
-    }
+    //         // options = JSON.parse(attrs) || {};
+    //         for(var i = 0; i < attrs.length; i++) {
+    //             var k = attrs[i];
+    //             options[k.name] = k.nodeValue;
+    //         }
+
+    //         var obj = Rosetta.render(Rosetta.create(type, options, childrenArr), item, true);
+    //     }
+    // }
+
+(function(render, create) {
+    render(create("r-todoapp", {'ref': "aaa", 'list': "[{\"title\":\"aaa\",\"completed\":\"sdsd\"},{\"title\":\"aaa1\",\"completed\":\"sdsd1\"},{\"title\":\"aaa2\",\"completed\":\"sdsd2\"},{\"title\":\"aaa3\",\"completed\":\"sdsd3\"},{\"title\":\"aaa4\",\"completed\":\"sdsd4\"}]", 'adad': "{\"v\":2,\"u\":34}}", 'class': "r-element r-invisible"},
+                        create("a", {'href': ""}, "测试一下，我应该显示"),
+                        create("p", null, "我不应该显示")
+                    ), "#rs-00cefa3-5");
+})(Rosetta.render, Rosetta.create);
+
     _allRendered = true;
+
     fire.call(Rosetta, 'ready');
 }
 
@@ -2619,9 +2631,9 @@ function getRealAttr(attr, toRealType) {
     for (var i in attr) {
         var item = attr[i];
 
-        // if (toRealType === true) {
-        //     attributeToAttrs.call(this, i, item);
-        // }
+        if (toRealType === true) {
+            attributeToAttrs.call(this, i, item);
+        }
 
         if (supportEvent[i]) {
             eventObj['ev-' + supportEvent[i]] = item;
@@ -2700,10 +2712,13 @@ function render(vTree, root, force) {
 
         obj.isAttached = true;
 
+        ref(obj.attrs.ref, obj);
+
         triggerChildren(obj, ATTACHED);
 
         obj.trigger(ATTACHED, obj);
     }
+
     return obj;
     // dom and children events delegation
 }
@@ -2754,7 +2769,7 @@ function create(type, attr) {
         elemObj.name = attr.ref ? attr.ref && ref(attr.ref, elemObj) : '';
 
         getRealAttr.call(elemObj, attr, true);
-        elemObj.attrs = attr;
+        elemObj.attrs = elemObj.attrs || attr;
 
         vTree = elemObj.__t(elemObj, elemObj.attrs, elemObj.refs);
 
