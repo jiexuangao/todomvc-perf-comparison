@@ -2509,6 +2509,8 @@ var supportEvent = require('./supportEvent.js'),
     CREATED = lifeEvents.CREATED
     ATTRIBUTECHANGE = lifeEvents.ATTRIBUTECHANGE;
 
+var _shouldReplacedContent = [];
+
 var h = require('./virtual-dom/h'),
     createElement = require('./virtual-dom/create-element');
 
@@ -2536,8 +2538,6 @@ function updatevNodeContent(vNodeFactory, contentChildren) {
 
 }
 
-window.shouldReplacedContent = [];
-
 function init() {
     var elems = [];
     _allRendered = false;
@@ -2560,17 +2560,15 @@ function init() {
     for (var i = 0; i < elems.length; i++) {
         var item = elems[i],
             type = item.tagName.toLowerCase(),
-            attrs = item.attributes;
             options = {};
+
+        var attrs = item.getAttribute('data');
 
         if (type.indexOf('r-') == 0) {
             var children = item.children,
                 childrenArr = [].slice.call(children);
 
-            for (var n = 0; n < attrs.length; n++) {
-                var attr = attrs[n];
-                options[attr.name] = attr.nodeValue;
-            }
+            options = JSON.parse(attrs);
 
             var obj = Rosetta.render(Rosetta.create(type, options, childrenArr), item, true);
 
@@ -2582,7 +2580,6 @@ function init() {
     _allRendered = true;
     fire.call(Rosetta, 'ready');
 }
-
 
 function ref(key, value) {
     if (!key) {
@@ -2622,9 +2619,9 @@ function getRealAttr(attr, toRealType) {
     for (var i in attr) {
         var item = attr[i];
 
-        if (toRealType === true) {
-            attributeToAttrs.call(this, i, item);
-        }
+        // if (toRealType === true) {
+        //     attributeToAttrs.call(this, i, item);
+        // }
 
         if (supportEvent[i]) {
             eventObj['ev-' + supportEvent[i]] = item;
@@ -2638,6 +2635,7 @@ function getRealAttr(attr, toRealType) {
         attr: attr
     }
 }
+
 
 
 function render(vTree, root, force) {
@@ -2660,7 +2658,7 @@ function render(vTree, root, force) {
     (contents || []).map(function(content, index){
         var parent = $(content).parents('[isrosettaelem=true]')[0];
         var num = parent.getAttribute('shouldReplacedContent');
-        var children = shouldReplacedContent[parseInt(num)];
+        var children = _shouldReplacedContent[parseInt(num)];
 
         var newWrapper = document.createElement('div');
         newWrapper.setAttribute('class', 'content');
@@ -2705,6 +2703,7 @@ function render(vTree, root, force) {
     return obj;
     // dom and children events delegation
 }
+
 
 /**
  * Returns vTree of newly created element instance
@@ -2754,8 +2753,8 @@ function create(type, attr) {
         vTree = elemObj.__t(elemObj, elemObj.attrs, elemObj.refs);
 
         vTree.properties.attributes.isrosettaelem = true;
-        shouldReplacedContent.push(childrenContent[0]);
-        vTree.properties.attributes.shouldReplacedContent = shouldReplacedContent.length - 1;
+        _shouldReplacedContent.push(childrenContent[0]);
+        vTree.properties.attributes.shouldReplacedContent = _shouldReplacedContent.length - 1;
 
         elemObj.vTree = vTree;
         elemObj.trigger(CREATED, elemObj);
