@@ -49,15 +49,18 @@ function parsePages(arr) {
     var pages = [];
 
     (arr || []).map(function(pageJSON, index) {
+        var name = 'lg-page swiper-slide';
+
         var page = Rosetta.create('div', {
-            class: 'lg-page swiper-slide'
+            class: name,
+            style: 'height:' + window.innerHeight + 'px'
         }, parseComponents(pageJSON.components));
 
         pages.push(page);
     });
 
     return Rosetta.create('div', {
-        class: 'lg-page-container swiper-container swiper-container-vertical swiper-container-android'
+        class: 'lg-page-container swiper-container'
     }, Rosetta.create('div', {
         class: 'lg-page-wrapper swiper-wrapper'
     }, pages));
