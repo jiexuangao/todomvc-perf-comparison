@@ -53,7 +53,7 @@ function parsePages(arr) {
 
         var page = Rosetta.create('div', {
             class: name,
-            style: 'height:' + window.innerHeight + 'px'
+            style: 'height:' + document.querySelector(".lg-container").clientHeight + 'px'
         }, parseComponents(pageJSON.components));
 
         pages.push(page);
