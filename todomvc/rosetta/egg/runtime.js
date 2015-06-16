@@ -9,11 +9,11 @@ hubble.init = function (json) {
 
         switch (name) {
             case "backStage":
-                children.push(parseBackStage(subJSON));
+                children.push(parseStage(subJSON, 'back'));
                 break;
 
             case "frontStage":
-                children.push(parseBackStage(subJSON));
+                children.push(parseStage(subJSON, 'front'));
                 break;
 
             case "pages":
@@ -31,30 +31,18 @@ hubble.init = function (json) {
 
     var container = document.querySelector('.lg-container');
     Rosetta.render(Rosetta.create('div', attributes, children), container);
-
     document.querySelector('#loading').remove();
     container.style.opacity = 1;
 };
 
-function parseBackStage(json) {
+function parseStage(json, type) {
     var components = parseComponents(json.components);
     var attributes = parseAttribute(json.attributes) || {};
     attributes = $.extend(attributes, {
-        class: 'lg-back-stage'
+        class: 'lg-' + type + '-stage'
     });
 
     return Rosetta.create('div', attributes, components);
-}
-
-function parseFrontStage(json) {
-    var components = parseComponents(json.components);
-    var attributes = parseAttribute(json.attributes) || {};
-    attributes = $.extend(attributes, {
-        class: 'lg-front-stage'
-    });
-
-    return Rosetta.create('div', attributes, components);
-
 }
 
 function parsePages(arr) {
@@ -86,7 +74,12 @@ function parseComponents(components) {
     }))
 
     components.map(function(component, index) {
-        result.push();
+        var item = Rosetta.create('div', {
+            class: 'lg-trailer'
+        }, Rosetta.create('div', {
+            class: 'lg-surface'
+        }, []))
+        result.push(item);
     });
 
     return result;
