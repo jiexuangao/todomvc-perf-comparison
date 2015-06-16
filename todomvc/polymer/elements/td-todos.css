@@ -1,17 +1,7 @@
-/*
- * @license
- * Copyright (c) 2014 The Polymer Project Authors. All rights reserved.
- * This code may only be used under the BSD style license found at http://polymer.github.io/LICENSE.txt
- * The complete set of authors may be found at http://polymer.github.io/AUTHORS.txt
- * The complete set of contributors may be found at http://polymer.github.io/CONTRIBUTORS.txt
- * Code distributed by Google as part of the polymer project is also
- * subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
- */
-
 /* base.css overrides */
 
-:host { 
-	* { 
+:host {
+	* {
 		display: block;
 		position: relative;
 	}
@@ -233,7 +223,7 @@ label[for='toggle-all'] {
 	text-decoration: none;
 }
 
-#filters li.polymer-selected a {
+#filters li.core-selected a {
 	font-weight: bold;
 }
 
@@ -257,8 +247,8 @@ label[for='toggle-all'] {
 @media screen and (-webkit-min-device-pixel-ratio:0) {
 	#toggle-all {
 		background: none;
-	    /* 
-	      ShadowDOM Polyfill work around for webkit/blink bug 
+	    /*
+	      ShadowDOM Polyfill work around for webkit/blink bug
 	      https://code.google.com/p/chromium/issues/detail?id=251510
 	    */
 	    background-color: transparent;

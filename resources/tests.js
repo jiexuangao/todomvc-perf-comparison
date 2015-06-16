@@ -266,7 +266,7 @@ Suites.push({
 
 Suites.push({
     name: 'Polymer',
-    url: 'todomvc/polymer/index.html',
+    url: 'todomvc/polymer/index.html?v=1',
     version: '1.0',
     prepare: function (runner, contentWindow, contentDocument) {
         return runner.waitForElement('html /deep/#new-todo').then(function (element) {
