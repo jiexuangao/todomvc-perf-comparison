@@ -74,13 +74,87 @@ function parseComponents(components) {
     }))
 
     components.map(function(component, index) {
-        var item = Rosetta.create('div', {
-            class: 'lg-trailer'
-        }, Rosetta.create('div', {
-            class: 'lg-surface'
-        }, []))
+        var createComponent = null;
+
+        if (component.type == 'image') {
+            createComponent = createImage;
+        } else if (component.type == 'label') {
+            createComponent = createLabel;
+        }
+
+        var item = createComponent(component);
+
+
         result.push(item);
     });
 
+    return result;
+}
+
+
+function createImage(json) {
+    var coordinate = getCoodinate(json.surface);
+    var position = [];
+    var size = [];
+    var animation = [];
+
+    for (var key in coordinate) {
+        if (key == 'width' || key == 'height') {
+            size.push(key + ':' + coordinate[key] + ';');
+        }
+
+        position.push(key + ':' + coordinate[key] + ';');
+    }
+
+    size = size.join('');
+    position = position.join('');
+
+    return Rosetta.create('div', {
+            class: 'lg-trailer',
+            style: position
+        }, Rosetta.create('div', {
+            class: 'lg-surface',
+            style: size
+        }, Rosetta.create('img', {
+            class: 'lg-component-img',
+            src: json.attributes.src,
+            style: size
+        })));
+}
+
+
+function createLabel(json) {
+    return Rosetta.create('div', {
+            class: 'lg-trailer'
+        }, Rosetta.create('div', {
+            class: 'lg-surface'
+        }, Rosetta.create('div', {
+            class: 'lg-component-label'
+        })));
+}
+
+
+function getCoodinate(surface) {
+    var height = document.querySelector(".lg-container").clientHeight/2;
+
+    var t = 325;
+
+    height = height || t;
+
+    var result = {
+        left: surface.x + "px",
+        width: surface.width + "px",
+        height: surface.height + "px"
+    };
+    switch (surface.coordinate) {
+        case "bottom":
+            result.bottom = -surface.height - surface.y + "px";
+            break;
+        case "central":
+            result.top = surface.y + height + "px";
+            break;
+        default:
+            result.top = surface.y + "px"
+    }
     return result;
 }
