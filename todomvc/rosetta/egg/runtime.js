@@ -99,7 +99,9 @@ function createImage(json) {
     var coordinate = getCoodinate(json.surface);
     var position = [];
     var size = [];
-    var animation = [];
+    var ani = getAnimation(json.animations);
+    var type = ani.name
+    var animation = ani.animation
 
     for (var key in coordinate) {
         if (key == 'width' || key == 'height') {
@@ -109,12 +111,21 @@ function createImage(json) {
         position.push(key + ':' + coordinate[key] + ';');
     }
 
+
+    for (var key in animation) {
+        position.push(key + ':' + animation[key] + ';');
+    }
+
     size = size.join('');
     position = position.join('');
 
+    var link = json.surface.link || '';
+    console.log(link);
+
     return Rosetta.create('div', {
-            class: 'lg-trailer',
-            style: position
+            class: 'lg-trailer animated ' + type ,
+            style: position,
+            'data-link': link
         }, Rosetta.create('div', {
             class: 'lg-surface',
             style: size
@@ -136,6 +147,40 @@ function createLabel(json) {
         })));
 }
 
+function getAnimation(json) {
+    var enter = json.enter;
+    var name = '';
+    var ani = {
+        '-webkit-animation-duration': '1s',
+        '-webkit-animation-delay': '0s',
+        '-webkit-animation-iteration-count': 1,
+        '-webkit-animation-direction': 'normal',
+        '-webkit-animation-fill-mode': 'backwards'
+    };
+    var flag = false;
+
+    for (var key in enter) {
+        flag = true;
+        if (key == 'name') {
+            name = enter[key];
+        } else if (key == 'repeat') {
+            ani['-webkit-animation-iteration-count'] = enter[key];
+        } else if (key == 'delay') {
+            ani['-webkit-animation-delay'] = enter[key] + 's';
+        } else {
+            ani['-webkit-animation-' + key] = enter[key];
+        }
+    }
+
+    if (!flag) {
+        ani = {};
+    }
+
+    return {
+        name: name,
+        animation: ani
+    };
+}
 
 function getCoodinate(surface) {
     var height = document.querySelector(".lg-container").clientHeight/2;
