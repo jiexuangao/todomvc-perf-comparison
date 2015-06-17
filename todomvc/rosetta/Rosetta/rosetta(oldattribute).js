@@ -46,10 +46,6 @@ var supportEvent = require('./supportEvent.js'),
     utils = require('./utils.js'),
     isString = utils.isString;
 
-
-var Delegator = require('./dom-delegator');
-
-
 function on(type, listener, context, ifOnce) {
     bind.call(this, type, listener, context, ifOnce);
 }
@@ -165,7 +161,7 @@ function createElementClass(type, renderFunc) {
 }
 
 module.exports = createElementClass;
-},{"./dom-delegator":5,"./lifeEvents.js":19,"./supportEvent.js":22,"./utils.js":23,"./virtual-dom/create-element":24,"./virtual-dom/diff":25,"./virtual-dom/h":26,"./virtual-dom/patch":34}],3:[function(require,module,exports){
+},{"./lifeEvents.js":19,"./supportEvent.js":22,"./utils.js":23,"./virtual-dom/create-element":24,"./virtual-dom/diff":25,"./virtual-dom/h":26,"./virtual-dom/patch":34}],3:[function(require,module,exports){
 var EvStore = require("ev-store")
 
 module.exports = addEvent
@@ -269,7 +265,13 @@ DOMDelegator.prototype.listenTo = function listenTo(eventName) {
             createHandler(eventName, this)
     }
 
-    this.target.addEventListener(eventName, listener, true)
+    if (this.target.addEventListener) {
+        this.target.addEventListener(eventName, listener, true)
+    } else {
+        this.target.attachEvent('on' + eventName, listener);
+    }
+
+
 }
 
 DOMDelegator.prototype.unlistenTo = function unlistenTo(eventName) {
@@ -294,9 +296,14 @@ DOMDelegator.prototype.unlistenTo = function unlistenTo(eventName) {
             "unlisten to " + eventName)
     }
 
-    this.target.removeEventListener(eventName, listener, true)
-}
+    if (this.target.removeEventListener) {
+        this.target.removeEventListener(eventName, listener, true)
+    } else {
+        this.target.dettachEvent(eventName, listener)
+    }
 
+
+}
 function createHandler(eventName, delegator) {
     var globalListeners = delegator.globalListeners;
     var delegatorTarget = delegator.target;
@@ -2563,7 +2570,6 @@ function init() {
             type = item.tagName.toLowerCase(),
             options = {};
 
-
         if (type.indexOf('r-') == 0) {
             var attrs = item.attributes || {};
 
@@ -2787,7 +2793,7 @@ function create(type, attr) {
         vTree.properties.attributes.isrosettaelem = true;
         if (childrenContent) {
             childrenContent.map(function(item, index) {
-                if (item.properties) {
+                if (!item.nodeType) {
                     childrenContent[index] = createElement(item);
                 }
             });
