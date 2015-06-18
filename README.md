@@ -9,3 +9,5 @@ a Macbook Pro:
 [![Sample results for Chrome Version 41.0.2272.101 (64-bit) OSX 10.10.3 on a Macbook Pro](sampleResult.png)][runner]
 
 [runner]: http://jiexuangao.github.io/todomvc-perf-comparison/
+
+
