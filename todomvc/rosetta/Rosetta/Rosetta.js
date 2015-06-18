@@ -1019,7 +1019,7 @@ function attributeToAttrs(name, value) {
         // filter out 'mustached' values, these are to be
         // get original value
         var currentValue = this.attrs[name];
-        if (!_allRendered) {
+        if (typeof currentValue != typeof value) {
             // deserialize Boolean or Number values from attribute
             value = deserializeValue(value, currentValue);
         }
