@@ -55,7 +55,7 @@ Rosetta.register('r-todoapp', function(tag) {
         })), tag.create('li', null, tag.create('a', {
             'href': '#/completed'
         })))), tag.create('content', {
-            'selector': 'a'
+            'select': 'a'
         })));
     };
 
