@@ -50,6 +50,7 @@ Suites.push({
     tests: [
         new BenchmarkTestStep('Adding' + numberOfItemsToAdd + 'Items', function (newTodo, contentWindow, contentDocument) {
             for (var i = 0; i < numberOfItemsToAdd; i++) {
+                newTodo = contentDocument.querySelector('#new-todo');
                 newTodo.value = 'Something to do ' + i;
 
                 var keydownEvent = document.createEvent('Event');
@@ -69,7 +70,8 @@ Suites.push({
         new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
             for (var i = 0; i < deleteButtons.length; i++) {
-                deleteButtons[i].click();
+                deleteButtons[0].click();
+                deleteButtons = contentDocument.querySelectorAll('.destroy');
             }
         })
     ]
