@@ -62,14 +62,20 @@ Suites.push({
         new BenchmarkTestStep('CompletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var checkboxes = contentDocument.querySelectorAll('.toggle');
             for (var i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].click();
+                // checkboxes[i].click();
+                var keydownEvent = document.createEvent('Event');
+                keydownEvent.initEvent('click', true, true);
+                checkboxes[i].dispatchEvent(keydownEvent);
             }
         })
         ,
         new BenchmarkTestStep('DeletingAllItems', function (newTodo, contentWindow, contentDocument) {
             var deleteButtons = contentDocument.querySelectorAll('.destroy');
             for (var i = 0; i < deleteButtons.length; i++) {
-                deleteButtons[i].click();
+                // deleteButtons[i].click();
+                var keydownEvent = document.createEvent('Event');
+                keydownEvent.initEvent('click', true, true);
+                deleteButtons[i].dispatchEvent(keydownEvent);
             }
         })
     ]
